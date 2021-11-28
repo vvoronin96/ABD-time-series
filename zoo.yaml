@@ -1,0 +1,67 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: time-series
+  name: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      volumes:
+        - name: nfs-home-storage
+          persistentVolumeClaim:
+            claimName: pvc-time-series-secondary-storage-0
+            readOnly: false
+      containers:
+      - name: zookeeper
+        image: node03.st:5000/zookeeper:3.7.0
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 2181  # ZK client
+          - containerPort: 2888  # Follower
+          - containerPort: 3888  # Election
+          - containerPort: 8080  # AdminServer
+        volumeMounts:
+          - mountPath: "/nfs-home"
+            name: nfs-home-storage
+            readOnly: false
+          - mountPath: "/data"          # Zookeeper data dir
+            name: nfs-home-storage
+            readOnly: false
+            subPath: "apps_data/zookeeper/data"
+          - mountPath: "/conf"          # Zookeeper config dir
+            name: nfs-home-storage
+            readOnly: false
+            subPath: "apps_data/zookeeper/conf"
+          - mountPath: "/datalog"       # Zookeeper datalog dir
+            name: nfs-home-storage
+            readOnly: false
+            subPath: "apps_data/zookeeper/datalog"
+          - mountPath: "/log"           # Zookeeper log dir
+            name: nfs-home-storage
+            readOnly: false
+            subPath: "apps_data/zookeeper/log"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+  namespace: time-series
+spec:
+  ports:
+    - port: 2181
+      protocol: TCP
+      name: client
+    - port: 8080
+      protocol: TCP
+      name: admin-server
+  selector:
+    app: zookeeper

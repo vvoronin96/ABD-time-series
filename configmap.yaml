@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ch-config
+  labels:
+    app: time-series-app
+data:
+  config.yaml: |
+    ts-cluster:
+      shard:
+        - internal_replication: false
+          replica:
+            host: main-storage-0.abd-headless-service
+            port: 9000
+        - internal_replication: false
+          replica:
+            host: main-storage-1.abd-headless-service
+            port: 9000
+        - internal_replication: false
+          replica:
+            host: main-storage-2.abd-headless-service
+            port: 9000
+        - internal_replication: false
+          replica:
+            host: main-storage-3.abd-headless-service
+            port: 9000
+        - internal_replication: false
+          replica:
+            host: main-storage-4.abd-headless-service
+            port: 9000

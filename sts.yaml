@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: main-storage
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: time-series-app
+  serviceName: "abd-headless-service"
+  template:
+    metadata:
+      labels:
+        app: time-series-app
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: clickhouse-server
+        image: node03.st:5000/clickhouse/clickhouse-server:21.8.10.19
+        ports:
+        - containerPort: 8123  # HTTP Client
+        - containerPort: 9000  # TCP Native Client
+        - containerPort: 9009  # Inter-Server Replication
+        volumeMounts:
+        - name: pvc-time-series
+          mountPath: /var/lib/clickhouse/
+        - name: ch-config
+          mountPath: /etc/clickhouse-server/config.yaml
+          subPath: config.yaml
+        - name: varlog
+          mountPath: /var/log
+      - name: logger
+        image: node03.st:5000/busybox:latest
+        args: [/bin/sh, -c, 'tail -n+1 -f /var/log/clickhouse-server/clickhouse-server.log']
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+      volumes:
+        - name: varlog
+          emptyDir: {}
+        - name: ch-config
+          configMap:
+            name: ch-config
+            defaultMode: 0555
+            items:
+              - key: "config.yaml"
+                path: "config.yaml"
+  volumeClaimTemplates:
+  - metadata:
+      name: pvc-time-series
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 150Gi

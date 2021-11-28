@@ -1,0 +1,12 @@
+# Headless Service for StatefulSet Pod DNS names
+apiVersion: v1
+kind: Service
+metadata:
+  name: abd-headless-service
+  labels:
+    app: time-series-app
+spec:
+# port's section can be deprecated because here is point-to-point communication
+  clusterIP: None
+  selector:
+    app: time-series-app
