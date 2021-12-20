@@ -10,3 +10,14 @@ spec:
   clusterIP: None
   selector:
     app: time-series-app
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: time-series
+  name: zookeeper
+spec:
+  clusterIP: None
+  selector:
+    app: zookeeper
