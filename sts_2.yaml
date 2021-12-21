@@ -29,7 +29,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   namespace: time-series
-  name: clickhouse-db
+  name: main-storage
 spec:
   replicas: 5
   selector:
@@ -62,9 +62,6 @@ spec:
           subPath: "users.xml"
         - name: varlog
           mountPath: /var/log
-        - mountPath: "/opt/shared-data"
-          name: shared-storage
-          readOnly: true
       - name: logger
         image: node03.st:5000/busybox:latest
         args: [/bin/sh, -c, 'tail -n+1 -f /var/log/clickhouse-server/clickhouse-server.log']
@@ -72,10 +69,6 @@ spec:
         - name: varlog
           mountPath: /var/log
       volumes:
-        - name: shared-storage
-          persistentVolumeClaim:
-            claimName: pvc-shared-time-series
-            readOnly: true
         - name: varlibclickhouse
           emptyDir: {}
         - name: varlog
@@ -89,6 +82,14 @@ spec:
                 path: "config.xml"
               - key: "users.xml"
                 path: "users.xml"
+  volumeClaimTemplates:
+    - metadata:
+        name: pvc-time-series
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 150Gi
 ---
 apiVersion: v1
 kind: Service
