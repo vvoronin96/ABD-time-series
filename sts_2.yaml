@@ -144,31 +144,31 @@ data:
             <kube_clickhouse_cluster>
                 <shard>
                     <replica>
-                        <host>clickhouse-db-0.clickhouse-db-hsvc</host>
+                        <host>main-storage-0.clickhouse-db-hsvc</host>
                         <port>9000</port>
                     </replica>
                 </shard>
                 <shard>
                     <replica>
-                        <host>clickhouse-db-1.clickhouse-db-hsvc</host>
+                        <host>main-storage-1.clickhouse-db-hsvc</host>
                         <port>9000</port>
                     </replica>
                 </shard>
                 <shard>
                     <replica>
-                        <host>clickhouse-db-2.clickhouse-db-hsvc</host>
+                        <host>main-storage-2.clickhouse-db-hsvc</host>
                         <port>9000</port>
                     </replica>
                 </shard>
                 <shard>
                     <replica>
-                        <host>clickhouse-db-3.clickhouse-db-hsvc</host>
+                        <host>main-storage-3.clickhouse-db-hsvc</host>
                         <port>9000</port>
                     </replica>
                 </shard>
                 <shard>
                     <replica>
-                        <host>clickhouse-db-4.clickhouse-db-hsvc</host>
+                        <host>main-storage-4.clickhouse-db-hsvc</host>
                         <port>9000</port>
                     </replica>
                 </shard>
